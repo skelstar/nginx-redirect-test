@@ -1,0 +1,43 @@
+version: "2"
+
+services:
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    restart: unless-stopped
+    ports:
+    - 9000:9000
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /c/Dev/Github/nginx-redirect-test/config/portainer:/data
+    
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx
+    ports:
+    - 8080:80
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+    - /c/Dev/Github/nginx-redirect-test/config/nginx:/etc/nginx
+
+  hello1:
+    image: nginxdemos/hello
+    container_name: hello1
+    environment:
+    - PUID=1000
+    - PGID=1000
+    restart: unless-stopped
+    ports:
+    - 8001:80
+  
+  hello2:
+    image: nginxdemos/hello
+    container_name: hello2
+    environment:
+    - PUID=1000
+    - PGID=1000
+    restart: unless-stopped
+    ports:
+    - 8002:80
